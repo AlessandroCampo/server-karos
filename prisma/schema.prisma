@@ -7,6 +7,8 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+//yo
+
 model Decklist {
   id       Int    @id @default(autoincrement())
   name     String
