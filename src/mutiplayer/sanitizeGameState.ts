@@ -1,4 +1,4 @@
-import { GameState, PlayerState } from "@shared/interfaces";
+import { GameState, PlayerState } from "../../shared/interfaces";
 import { Card } from "../../shared/Card";
 
 export function sanitizeGameStateFor(

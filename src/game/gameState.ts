@@ -28,11 +28,11 @@ import {
     reroll,
 
 } from '../gameEngine';
-import { Card } from '@shared/Card';
 import { ActivateEffectResult, useEffect } from './effects/useEffect';
 import { EffectType } from '../../shared/Effect';
 import { getPlayersFromState } from './gameUtils';
 import { EffectTriggered, SideEvent } from '../../shared/interfaces';
+import { Card } from '../../shared/Card';
 
 const { activateEffect } = useEffect();
 
