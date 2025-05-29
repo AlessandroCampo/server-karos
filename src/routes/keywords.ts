@@ -1,3 +1,5 @@
+/*
+
 import { Router, Request, Response } from 'express';
 import { prisma } from '../prismaClient';
 
@@ -41,3 +43,5 @@ keywordsRouter.get('/keywords', async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch keywords' });
     }
 });
+
+*/

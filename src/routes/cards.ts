@@ -1,3 +1,5 @@
+/* 
+
 import { Router, Request, Response } from 'express';
 import { prisma } from '../prismaClient';
 import path from 'path';
@@ -134,3 +136,5 @@ cardsRouter.post('/upload-image/:cardId', upload.single('image'), async (_req: R
         res.status(500).json({ error: 'Failed to upload image' });
     }
 });
+
+*/
