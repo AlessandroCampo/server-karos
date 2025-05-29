@@ -4,10 +4,6 @@ import { Server } from 'socket.io';
 import cors from 'cors';
 import path from 'path';
 import dotenv from 'dotenv';
-
-import { cardsRouter } from './routes/cards';
-import { keywordsRouter } from './routes/keywords';
-
 import { initializeSocket } from './socket';
 import { decklistRouter } from './routes/decklist';
 
@@ -31,9 +27,6 @@ app.use((req, res, next) => {
     next();
 });
 app.use('/uploads', express.static(path.join(__dirname, '..', 'public', 'uploads')));
-app.use(cardsRouter);
-app.use('/keywords', keywordsRouter);
-// Multer setup
 app.use('/decklist', decklistRouter);
 app.use((req, res) => {
     res.status(404).json({ error: 'Route not found' });

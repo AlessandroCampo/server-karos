@@ -3,70 +3,15 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-enum Type {
-  MINION
-  SPELL
-  TRAP
-}
+model Decklist {
+  id       Int    @id @default(autoincrement())
+  name     String
+  playerId String
+  cards    Json
 
-enum SubType {
-  CONTINOUS
-  EQUIP
-}
-
-enum Color {
-  RED
-  BLUE
-  BLACK
-  GREEN
-  YELLOW
-  BROWN
-  WHITE
-}
-
-enum Rarity {
-  COMMON
-  UNCOMMON
-  RARE
-  EPIC
-  LEGENDARY
-}
-
-model Card {
-  id           String        @id @default(uuid())
-  name         String        @unique
-  type         Type          @default(MINION)
-  color        Color         @default(WHITE)
-  subtype      SubType?
-  attack       Int?
-  defense      Int?
-  cost         Int
-  rarity       Rarity
-  effectName   String? // e.g. "Fireball"
-  effectType   String? // e.g. "Damage", "Buff", "Draw"
-  effectText   String? // e.g. "Deal 3 damage to target"
-  cardKeywords CardKeyword[]
-
-  @@map("cards")
-}
-
-model Keyword {
-  id   Int    @id @default(autoincrement())
-  name String @unique
-
-  cardKeywords CardKeyword[]
-}
-
-model CardKeyword {
-  cardId    String
-  keywordId Int
-
-  card    Card    @relation(fields: [cardId], references: [id])
-  keyword Keyword @relation(fields: [keywordId], references: [id])
-
-  @@id([cardId, keywordId])
+  @@map("decklists") // mapping alla tabella già usata
 }
