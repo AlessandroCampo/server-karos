@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "ts-node-dev --respawn src/index.ts",
     "build": "npx prisma generate && tsc",
+    "postinstall": "prisma generate",
     "start": "node dist/src/index.js"
   },
   "keywords": [],
