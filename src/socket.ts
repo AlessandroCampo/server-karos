@@ -52,9 +52,8 @@ async function launchGame(room: string, socket: Socket, io: Server) {
     const startingPlayer = players[diceRoll()];
 
     async function loadDeck(playerId: string, socketId: string, testDeckIndex: number) {
-        const result = await prisma.$queryRaw<DecklistRow[]>`
-        SELECT * FROM decklists WHERE playerId = ${playerId} ORDER BY id ASC LIMIT 1
-    `;
+        const result = await prisma.$queryRaw`SELECT * FROM decklists WHERE "playerId" = ${playerId} ORDER BY id ASC LIMIT 1`;
+
 
 
         const savedDeck = result[0]?.cards || testDecks[testDeckIndex];
@@ -130,7 +129,7 @@ export function initializeSocket(io: Server) {
 
         socket.on('player-auth', ({ playerId }) => {
             playerSocketMap.set(socket.id, playerId);
-            console.log(`Player ${playerId} mapped to socket ${socket.id}`);
+            console.log(`Player ${playerId} mapped to socket ${socket.id} `);
         });
 
         // Listen for the 'joinQueue' event to start matchmaking
@@ -139,7 +138,7 @@ export function initializeSocket(io: Server) {
             try {
                 const room = await tryMatchmake(socket);
                 if (room) {
-                    console.log(`🏁 starting game in ${room}`);
+                    console.log(`🏁 starting game in ${room} `);
                     return launchGame(room, socket, io);
                 }
             } catch (err) {
@@ -148,7 +147,7 @@ export function initializeSocket(io: Server) {
         });
 
         socket.on('leaveQueue', async () => {
-            console.log(`🕹️ Player ${socket.id} left the queue :(`);
+            console.log(`🕹️ Player ${socket.id} left the queue: (`);
 
             const idx = waitingQueue.indexOf(socket.id);
 
@@ -164,7 +163,7 @@ export function initializeSocket(io: Server) {
         });
 
         socket.on('disconnect', () => {
-            console.log(`❌ Player disconnected: ${socket.id}`);
+            console.log(`❌ Player disconnected: ${socket.id} `);
 
             const idx = waitingQueue.indexOf(socket.id);
             if (idx !== -1) {
