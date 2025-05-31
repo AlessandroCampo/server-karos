@@ -11,11 +11,11 @@ decklistRouter.post('/', async (req: Request, res: Response): Promise<any> => {
         const deck: Deck = req.body.deck;
 
         await prisma.$executeRaw`
-      DELETE FROM decklists WHERE player_id = ${deck.playerId}
+      DELETE FROM decklists WHERE playerId = ${deck.playerId}
     `;
 
         await prisma.$executeRaw`
-            INSERT INTO decklists (name, player_id, cards)
+            INSERT INTO decklists (name, playerId, cards)
             VALUES (${deck.name}, ${deck.playerId}, ${JSON.stringify(deck.decklist)})
         `;
 
@@ -39,7 +39,7 @@ decklistRouter.get('/:playerId', async (req: Request, res: Response): Promise<an
 
     try {
         const deck = await prisma.$queryRaw`
-            SELECT * FROM decklists WHERE player_id = ${playerId} ORDER BY id ASC LIMIT 1
+            SELECT * FROM decklists WHERE playerId = ${playerId} ORDER BY id ASC LIMIT 1
         `;
 
 
