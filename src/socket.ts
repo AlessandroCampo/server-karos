@@ -52,11 +52,14 @@ async function launchGame(room: string, socket: Socket, io: Server) {
     const startingPlayer = players[diceRoll()];
 
     async function loadDeck(playerId: string, socketId: string, testDeckIndex: number) {
+
+        /*
         const result = await prisma.$queryRaw`SELECT * FROM decklists WHERE "playerId" = ${playerId} ORDER BY id ASC LIMIT 1`;
+        */
 
 
-
-        const savedDeck = result[0]?.cards || testDecks[testDeckIndex];
+        //const savedDeck = result[0]?.cards || testDecks[testDeckIndex];
+        const savedDeck = testDecks[testDeckIndex];
         return shuffle(fetchDeckData(savedDeck, socketId));
     }
 
