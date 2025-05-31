@@ -1,14 +1,26 @@
-/* 
 
 import { Router, Request, Response } from 'express';
-import { prisma } from '../prismaClient';
-import path from 'path';
-import fs from 'fs';
-import multer from 'multer';
 import { cardTemplates } from '../data/testCards';
 
 
 export const cardsRouter = Router();
+
+
+
+
+cardsRouter.get('/cards', async (_req: Request, res: Response): Promise<void> => {
+    try {
+        const allCards = Object.values(cardTemplates);
+        console.log('asked all cards');
+        res.json(allCards)
+    } catch (err) {
+        console.error('Fetch cards error', err)
+        res.status(500).json({ error: 'Failed to fetch cards' })
+    }
+})
+
+
+/*LINK - 
 
 const storage = multer.diskStorage({
     destination: (_req, _file, cb) => {
@@ -28,25 +40,9 @@ const storage = multer.diskStorage({
         // Use cardId for the filename
         cb(null, `${_req.params.cardId}.jpg`);
     },
-});
-
-
-
+    
 export const upload = multer({ storage });
-
-
-
-
-cardsRouter.get('/cards', async (_req: Request, res: Response): Promise<void> => {
-    try {
-        const allCards = Object.values(cardTemplates);
-        console.log('asked all cards');
-        res.json(allCards)
-    } catch (err) {
-        console.error('Fetch cards error', err)
-        res.status(500).json({ error: 'Failed to fetch cards' })
-    }
-})
+});
 
 cardsRouter.get('/card-data', async (_req: Request, res: Response): Promise<void> => {
     try {
@@ -59,8 +55,6 @@ cardsRouter.get('/card-data', async (_req: Request, res: Response): Promise<void
         res.status(500).json({ error: 'Failed to fetch card data' });
     }
 });
-
-
 // Step 1: Create Card Route - No image handling here
 // Step 1: Create Card Route (without image)
 cardsRouter.post('/create-card', async (req, res) => {
@@ -137,4 +131,16 @@ cardsRouter.post('/upload-image/:cardId', upload.single('image'), async (_req: R
     }
 });
 
+
+
 */
+
+
+
+
+
+
+
+
+
+

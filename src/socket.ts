@@ -53,7 +53,7 @@ async function launchGame(room: string, socket: Socket, io: Server) {
 
     async function loadDeck(playerId: string, socketId: string, testDeckIndex: number) {
         const result = await prisma.$queryRaw<DecklistRow[]>`
-        SELECT * FROM decklists WHERE player_id = ${playerId} ORDER BY id ASC LIMIT 1
+        SELECT * FROM decklists WHERE playerId = ${playerId} ORDER BY id ASC LIMIT 1
     `;
 
 
