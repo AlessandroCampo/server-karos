@@ -1,6 +1,5 @@
 generator client {
   provider = "prisma-client-js"
-  output   = "../src/generated/prisma"
 }
 
 datasource db {
@@ -16,5 +15,5 @@ model Decklist {
   playerId String
   cards    Json
 
-  @@map("decklists") // mapping alla tabella già usata
+  @@map("decklists")
 }
