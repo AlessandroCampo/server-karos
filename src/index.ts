@@ -26,7 +26,9 @@ const io = new Server(httpServer, {
 // Middleware
 app.use(cors());
 app.use(express.json());
-app.use(jwtAuth);
+app.use((req, res, next) => {
+    jwtAuth(req, res, next);
+});
 app.use((req, res, next) => {
     res.setHeader('ngrok-skip-browser-warning', 'true');
     next();
