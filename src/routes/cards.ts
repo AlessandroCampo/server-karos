@@ -8,7 +8,7 @@ export const cardsRouter = Router();
 
 
 
-cardsRouter.get('/cards', async (_req: Request, res: Response): Promise<void> => {
+cardsRouter.get('/', async (_req: Request, res: Response): Promise<void> => {
     try {
         const allCards = Object.values(cardTemplates);
         console.log('asked all cards');

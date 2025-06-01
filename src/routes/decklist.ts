@@ -8,12 +8,17 @@ export const decklistRouter = Router();
 
 decklistRouter.post('/', async (req: Request, res: Response): Promise<any> => {
     try {
+        const playerId = req.playerId;
+        if (!playerId) {
+            return res.status(401).json({ error: 'Unauthorized: missing playerId' });
+        }
+
         const deck: Deck = req.body.deck;
 
         // 1. Delete all previous decklists for the player
         await prisma.decklist.deleteMany({
             where: {
-                playerId: deck.playerId,
+                playerId,
             },
         });
 
@@ -21,8 +26,8 @@ decklistRouter.post('/', async (req: Request, res: Response): Promise<any> => {
         const createdDeck = await prisma.decklist.create({
             data: {
                 name: deck.name,
-                playerId: deck.playerId,
-                cards: deck.decklist,
+                playerId,
+                cards: JSON.stringify(deck.decklist),
             },
         });
 
@@ -34,16 +39,12 @@ decklistRouter.post('/', async (req: Request, res: Response): Promise<any> => {
 });
 
 
-function serializeBigInts(obj: any) {
-    return JSON.parse(
-        JSON.stringify(obj, (_, value) =>
-            typeof value === 'bigint' ? value.toString() : value
-        )
-    );
-}
 
-decklistRouter.get('/:playerId', async (req: Request, res: Response): Promise<any> => {
-    const playerId = Number(req.params.playerId); // Ensure it's a number
+decklistRouter.get('/', async (req: Request, res: Response): Promise<any> => {
+    const playerId = req.playerId;
+    if (!playerId) {
+        return res.status(401).json({ error: 'Unauthorized: missing playerId' });
+    }
 
     try {
         const deck = await prisma.decklist.findFirst({
@@ -51,7 +52,7 @@ decklistRouter.get('/:playerId', async (req: Request, res: Response): Promise<an
             orderBy: { id: 'asc' },
         });
 
-        return res.json(deck ?? null); // Prisma handles BigInt serialization internally if possible
+        return res.json(deck ?? null);
     } catch (err) {
         console.error(err);
         return res.status(500).json({ error: 'Failed to fetch deck' });

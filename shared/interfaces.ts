@@ -30,8 +30,8 @@ export interface DecklistCard {
 }
 
 export interface Deck {
-    id?: string;
-    playerId?: string;
+    id?: number;
+    playerId?: number;
     name: string;
     decklist: DecklistCard[],
 }

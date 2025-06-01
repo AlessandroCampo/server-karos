@@ -13,6 +13,7 @@ import { prisma } from './prismaClient';
 
 import { initGameMethods } from './mutiplayer/gameMethods';
 import { sanitizeGameStateFor } from './mutiplayer/sanitizeGameState';
+import { verifyToken } from './jwt';
 
 type DecklistRow = {
     id: string;
@@ -47,7 +48,7 @@ async function tryMatchmake(socket: Socket): Promise<string | undefined> {
 
 /** Create initial game state, store session, and emit a 'game-start' to each player. */
 async function launchGame(room: string, socket: Socket, io: Server) {
-    const [a, b] = room.split('-').slice(1);      // [opponentId, thisSocketId]
+    const [a, b] = room.split('-').slice(1);
     const players = [a, b];
     const startingPlayer = players[diceRoll()];
 
@@ -61,13 +62,16 @@ async function launchGame(room: string, socket: Socket, io: Server) {
             },
         });
 
-        const savedDeck = result?.cards || testDecks[testDeckIndex];
+        const savedDeck = typeof result?.cards === 'string'
+            ? JSON.parse(result.cards as string)
+            : testDecks[testDeckIndex];
         return shuffle(fetchDeckData(savedDeck, socketId));
     }
 
 
-    const playerAId = playerSocketMap.get(a) || a;
-    const playerBId = playerSocketMap.get(b) || b;
+    const playerAId = io.sockets.sockets.get(a)?.data.playerId;
+    const playerBId = io.sockets.sockets.get(b)?.data.playerId;
+
 
     const [deckA, deckB] = await Promise.all([
         loadDeck(playerAId, a, 0),
@@ -125,6 +129,25 @@ async function launchGame(room: string, socket: Socket, io: Server) {
 }
 
 export function initializeSocket(io: Server) {
+
+
+    io.use((socket, next) => {
+        const token = socket.handshake.auth.token;
+
+        if (!token) {
+            return next(new Error('Unauthorized: No token provided'));
+        }
+
+        try {
+            const payload = verifyToken(token);
+            socket.data.playerId = payload.playerId;
+            return next();
+        } catch (err) {
+            return next(new Error('Unauthorized: Invalid token'));
+        }
+    });
+
+
     io.on('connection', (socket: Socket) => {
         console.log('🔌 player connected:', socket.id);
         socket.emit('connected', { playerId: socket.id });
