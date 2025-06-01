@@ -10,22 +10,29 @@ decklistRouter.post('/', async (req: Request, res: Response): Promise<any> => {
     try {
         const deck: Deck = req.body.deck;
 
-        await prisma.$executeRaw`
-            DELETE FROM decklists WHERE "playerId" = ${deck.playerId}
-            `;
+        // 1. Delete all previous decklists for the player
+        await prisma.decklist.deleteMany({
+            where: {
+                playerId: deck.playerId,
+            },
+        });
 
-        await prisma.$executeRaw`
-        INSERT INTO decklists (name, "playerId", cards)
-        VALUES (${deck.name}, ${deck.playerId}, ${JSON.stringify(deck.decklist)})
-        `;
+        // 2. Insert the new deck
+        const createdDeck = await prisma.decklist.create({
+            data: {
+                name: deck.name,
+                playerId: deck.playerId,
+                cards: deck.decklist,
+            },
+        });
 
-
-        return res.status(201).json({ deck });
+        return res.status(201).json({ deck: createdDeck });
     } catch (err) {
         console.error(err);
         return res.status(500).json({ error: 'Insert failed' });
     }
 });
+
 
 function serializeBigInts(obj: any) {
     return JSON.parse(
@@ -36,19 +43,20 @@ function serializeBigInts(obj: any) {
 }
 
 decklistRouter.get('/:playerId', async (req: Request, res: Response): Promise<any> => {
-    const playerId = req.params.playerId;
+    const playerId = Number(req.params.playerId); // Ensure it's a number
 
     try {
-        const deck = await prisma.$queryRaw`
-    SELECT * FROM decklists WHERE "playerId" = ${playerId} ORDER BY id ASC LIMIT 1
-    `;
+        const deck = await prisma.decklist.findFirst({
+            where: { playerId },
+            orderBy: { id: 'asc' },
+        });
 
-
-        return res.json(deck ? serializeBigInts(deck)[0] : null);
+        return res.json(deck ?? null); // Prisma handles BigInt serialization internally if possible
     } catch (err) {
         console.error(err);
         return res.status(500).json({ error: 'Failed to fetch deck' });
     }
 });
+
 
 
