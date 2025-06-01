@@ -35,7 +35,7 @@ export const unitsCanBattle = (
         return { success: false, reason: "Target dell'attacco non valido" };
     }
 
-    if (!defender.isHorizontal && opponent.board.some(c => c.isHorizontal)) {
+    if (!defender.isHorizontal) {
         return {
             success: false,
             reason: "You must attack the units in defense position first",

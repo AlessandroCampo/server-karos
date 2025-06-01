@@ -313,7 +313,6 @@ export function minionAttack(state: GameState, payload: MinionAttackPayload): Ba
     const st = structuredClone(state);
     const [player, opponent] = getPlayersFromState(st, playerId);
 
-    console.log(defendingMinionId, opponent.board.map(u => { u.instanceId, u.name }));
 
     const attacker = player.board.find(c => c.instanceId == attackingMinionId);
     const defender = opponent.board.find(c => c.instanceId == defendingMinionId);

@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "main": "dist/index.js",
   "scripts": {
-    "dev": "ts-node-dev --respawn src/index.ts",
     "build": "npx prisma generate && tsc",
     "postinstall": "prisma generate",
-    "start": "node dist/src/index.js"
+    "prisma:migrate": "prisma migrate deploy",
+    "start": "npm run prisma:migrate && node dist/src/index.js"
   },
   "prisma": {
     "schema": "prisma/schema.prisma"

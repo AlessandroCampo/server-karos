@@ -3,17 +3,21 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
-//yo
+model Player {
+  id        Int        @id @default(autoincrement())
+  name      String
+  decklists Decklist[]
+}
 
 model Decklist {
   id       Int    @id @default(autoincrement())
   name     String
-  playerId String
+  playerId Int
   cards    Json
 
-  @@map("decklists") // mapping alla tabella già usata
+  player Player @relation(fields: [playerId], references: [id], onDelete: Cascade)
 }
