@@ -1,5 +1,5 @@
 
-import { Card } from "../../shared/Card";
+import { Card, StatusCondition } from "../../shared/Card";
 import { Effect } from "../../shared/Effect";
 import { EffectType } from "../../shared/Effect";
 import { CardType, EventType, GameState, PlayerState } from "../../shared/interfaces";
@@ -99,11 +99,12 @@ export const inflictDamageAoe = ([player, opponent]: PlayerState[], activator: C
 }
 
 
-export const drawCard = (player: PlayerState, amount: number = 1) => {
-    console.log(player.hand.length, gameRules.MAX_HAND_SIZE);
-    if (player.hand.length >= gameRules.MAX_HAND_SIZE) return;
+export const drawCard = (player: PlayerState, amount: number = 1): Card[] => {
+    if (player.hand.length >= gameRules.MAX_HAND_SIZE) return [];
     const drawCount = Math.min(amount, player.deck.length);
-    player.hand.push(...player.deck.splice(0, drawCount));
+    const drawnCards = player.deck.splice(0, drawCount);
+    player.hand.push(...drawnCards);
+    return drawnCards;
 }
 
 export const playCardToBoard = (target: Card, player: PlayerState, opponent: PlayerState) => {
@@ -127,7 +128,7 @@ export const boostStats = (card: Card, { attack, defense }: stats) => {
     card.defense += defense;
 };
 
-export const rebornRandom = (condition: (unit: any) => boolean, [player, opponent]: PlayerState[], activatorCard: Card): void => {
+export const rebornRandom = (condition: (unit: any) => boolean, [player, opponent]: PlayerState[], activatorCard: Card): Card | void => {
     if (player.board.length >= gameRules.MAX_FIELD_SIZE) {
         return;
     }
@@ -145,10 +146,17 @@ export const rebornRandom = (condition: (unit: any) => boolean, [player, opponen
     owner.graveyard = owner.graveyard.filter(unit => unit !== reborned);
     owner.board.push(reborned);
     activateEffect(reborned, EffectType.ON_PLAY, [player, opponent]);
+
+    return reborned;
 };
 
 export const destroyUnit = (target: Card, [player, opponent]: PlayerState[]) => {
 
+}
+
+export const applyChain = (target: Card) => {
+    target.statusConditions.push(StatusCondition.CHAINED);
+    target.isHorizontal = true;
 }
 
 

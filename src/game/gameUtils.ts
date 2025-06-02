@@ -1,6 +1,7 @@
+import { randomUUID } from "crypto";
 import { Card } from "../../shared/Card";
 import { EffectType } from "../../shared/Effect";
-import { GameState, Keyword, PlayerState, StatKey } from "../../shared/interfaces";
+import { CardType, Color, GameState, Keyword, PlayerState, StatKey } from "../../shared/interfaces";
 
 import { useEffect } from '../game/effects/useEffect';
 const { activateEffect } = useEffect();
@@ -72,7 +73,6 @@ export function handleUnitDeath(unit: Card, player: PlayerState, opponent: Playe
     // Add to graveyard
     owner.graveyard.push(unit);
 
-    // Trigger ON_DEATH again if needed (e.g., death location)
     activateEffect(unit, EffectType.ON_DEATH, getEffectContext(unit, player, opponent));
     if (byBattle && killer) {
         activateEffect(unit, EffectType.ON_BATTLE_DEATH, [player, opponent], killer);
@@ -86,20 +86,24 @@ export function handleUnitDeath(unit: Card, player: PlayerState, opponent: Playe
     })
 
     // BONESKIN resurrection
-    if (unit.keywords.includes(Keyword.BONESKIN) && !unit.rebornedByBoneskin) {
+    if (unit.keywords.includes(Keyword.BONESKIN)) {
 
-        console.log('boneskin reborn');
-        unit.keywords = unit.keywords.filter(k => k !== Keyword.BONESKIN);
+        const token = generateToken();
+        owner.board.push(token);
+
+        /*LINK - 
+         unit.keywords = unit.keywords.filter(k => k !== Keyword.BONESKIN);
         unit.defense = 1;
 
 
         owner.graveyard = owner.graveyard.filter(c => c.instanceId !== unit.instanceId);
         owner.board.push(unit);
         unit.rebornedByBoneskin = true;
+        */
+
     } else {
-        console.log('boneskin reset');
-        resetUnit(unit);
     }
+    resetUnit(unit);
 }
 
 
@@ -163,4 +167,26 @@ export function resetUnit(unit: Card) {
 
     return unit;
 
+}
+
+export function generateToken(): Card {
+    const tokenParams = {
+        templateId: "token",
+        instanceId: crypto.randomUUID(),
+        name: "Token",
+        image_url: "", // or a placeholder image URL
+        attack: 1,
+        originalAttack: 1,
+        defense: 1,
+        originalDefense: 1,
+        cost: 1,
+        originalCost: 1,
+        color: Color.WHITE,
+        type: CardType.MINION,
+        subtype: null,
+        isHorizontal: false,
+        boostedByMana: 0
+    };
+
+    return new Card(tokenParams);
 }

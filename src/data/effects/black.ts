@@ -3,7 +3,7 @@ import { Effect, EffectType } from "../../../shared/Effect";
 import { ArcheType, Card } from "../../../shared/Card";
 import { CardType, Keyword } from "../../../shared/interfaces";
 import { handleUnitDeath, targetWithHighestStat, targetWithLowestStat } from "../../game/gameUtils";
-import { boostStats, CardEffectMap, dealDamage, dealDirectDamage, dealRandomDamageToOpponentUnit, destroyRandomOppponentUnit, drawCard, inflictDamageAoe, rebornRandom } from "../cardEffects";
+import { applyChain, boostStats, CardEffectMap, dealDamage, dealDirectDamage, dealRandomDamageToOpponentUnit, destroyRandomOppponentUnit, drawCard, inflictDamageAoe, rebornRandom } from "../cardEffects";
 import { StatKey } from "../../../shared/interfaces";
 
 const RottingGhoulEffect = new Effect({
@@ -109,7 +109,7 @@ const PlaguebearerEffectBt = new Effect({
         if (!target) {
             return
         }
-        target.statusConditions.push(StatusCondition.CHAINED);
+        applyChain(target);
     },
 
 });
@@ -227,7 +227,8 @@ const MandragoraEffect = new Effect({
             return;
         }
 
-        target.statusConditions.push(StatusCondition.CHAINED);
+        applyChain(target);
+
     },
 
 });
@@ -275,7 +276,7 @@ const CursedSpiritEffectBt = new Effect({
 
         const chainTarget = targetWithHighestStat(opponent.board, 'cost');
         if (chainTarget) {
-            chainTarget.statusConditions.push(StatusCondition.CHAINED);
+            applyChain(chainTarget);
         }
     },
 
@@ -547,6 +548,21 @@ const ElixirOfLongLifeEffect = new Effect({
 
 
 });
+const HollowPurpleEffect = new Effect({
+
+    type: EffectType.ON_PLAY,
+
+    resolver: ([player, opponent], card) => {
+        if (!player || !card) {
+            return
+        };
+        inflictDamageAoe([player, opponent], card, 2, false, false);
+    },
+
+
+
+
+});
 const TouchOfDeathEffect = new Effect({
 
     type: EffectType.ON_PLAY,
@@ -655,6 +671,9 @@ export const blackEffects: Record<string, CardEffectMap> = {
     },
     'Touch of Death': {
         default: [TouchOfDeathEffect]
+    },
+    'Hollow Purple': {
+        default: [HollowPurpleEffect]
     },
 
 

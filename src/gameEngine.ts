@@ -191,7 +191,7 @@ export function passTurn(
     active.mana = Math.min(st.globalTurn, gameRules.MAX_MANA);
     active.board.forEach(u => {
         u.isActive = true;
-        if (!u.keywords.includes(Keyword.IMMOBILE)) {
+        if (!u.keywords.includes(Keyword.IMMOBILE) && !u.statusConditions.includes(StatusCondition.CHAINED)) {
             u.isHorizontal = false;
         }
         u.attacksCounter = 0;

@@ -14,7 +14,7 @@ class Card {
     instanceId: string;
     templateId: string;
     name: string;
-    image_url: string;
+    image_url?: string;
     attack: number | null;
     defense: number | null;
     originalAttack: number | null;
@@ -99,7 +99,7 @@ class Card {
         this.templateId = templateId;
         this.instanceId = instanceId;
         this.name = name;
-        this.image_url = image_url;
+        this.image_url = image_url || '';
         this.attack = attack;
         this.defense = defense;
         this.originalAttack = originalAttack;

@@ -377,6 +377,46 @@ const CatapultEffect = new Effect({
         }
     },
 });
+const CallToArmsEffect = new Effect({
+
+    type: EffectType.ON_PLAY,
+    resolver: ([player, opponent]) => {
+
+        const drawnCards = drawCard(player, 3);
+
+        for (const card of drawnCards) {
+            if (card.type !== CardType.MINION) {
+
+                const index = player.hand.findIndex(c => c.instanceId === card.instanceId);
+                if (index !== -1) {
+                    player.hand.splice(index, 1);
+                    player.graveyard.push(card);
+                }
+            }
+        }
+
+
+    }
+});
+const IndomitSpiritEffect = new Effect({
+
+    type: EffectType.ON_PLAY,
+    resolver: ([player, opponent], card) => {
+
+        const selector = (unit: Card) => {
+            return unit.cost == 1 && unit.name.includes('Goblin') && unit.cost == 1;
+        };
+
+        const reborned = rebornRandom(selector, [player, opponent], card!);
+
+        if (reborned) {
+            reborned.keywords.push(Keyword.RUSH);
+            reborned.isActive = true;
+            reborned.isHorizontal = false;
+        }
+
+    }
+});
 
 const GoblinMassGraveEffect = new Effect({
 
@@ -461,4 +501,10 @@ export const redEffects: Record<string, CardEffectMap> = {
     'Catapult': {
         default: [CatapultEffect],
     },
+    'Call to Arms': {
+        default: [CallToArmsEffect]
+    },
+    'Indomit spirit': {
+        default: [IndomitSpiritEffect]
+    }
 };

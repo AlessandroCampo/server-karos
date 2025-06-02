@@ -395,7 +395,18 @@ export const blackTemplates: CardTemplateMap = {
         keywords: [],
         effectText: "Deal 2 damage to a creature.",
         btText: ""
-    }
-
-
+    },
+    HollowPurple: {
+        templateId: "62",
+        name: "Hollow Purple",
+        cost: 4,
+        color: Color.BLACK,
+        type: CardType.SPELL,
+        attack: null,
+        defense: null,
+        subtype: null,
+        keywords: [],
+        effectText: "Deal 2 damage to every unit on the enemy field.",
+        btText: ""
+    },
 };
